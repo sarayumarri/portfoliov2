@@ -1,0 +1,16 @@
+# dependencies
+node_modules
+
+# Next.js build output
+.next
+out
+
+# env files (API keys)
+.env*
+
+# Vercel
+.vercel
+
+# misc
+.DS_Store
+*.log
