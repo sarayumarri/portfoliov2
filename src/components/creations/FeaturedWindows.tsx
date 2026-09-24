@@ -59,7 +59,7 @@ export default function FeaturedWindows({ onOpen }: Props) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const wall = wallRef.current!;
-    let raf = 0, queued = false;
+    let raf = 0, queued = false, visible = false;
     const update = () => {
       queued = false;
       const r = wall.getBoundingClientRect();
@@ -69,11 +69,29 @@ export default function FeaturedWindows({ onOpen }: Props) {
         if (el) el.style.transform = `translate3d(0,${(off * PLANTS[i].depth).toFixed(1)}px,0)`;
       });
     };
-    const onScroll = () => { if (!queued) { queued = true; raf = requestAnimationFrame(update); } };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    const onScroll = () => {
+      if (!visible || document.visibilityState !== "visible" || queued) return;
+      queued = true;
+      raf = requestAnimationFrame(update);
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) onScroll();
+    });
+    const onVisibility = () => { if (document.visibilityState === "visible" && visible) onScroll(); };
+    io.observe(wall);
+    document.addEventListener("visibilitychange", onVisibility);
+    const guardedScroll = () => { if (visible && document.visibilityState === "visible") onScroll(); };
+    guardedScroll();
+    window.addEventListener("scroll", guardedScroll, { passive: true });
+    window.addEventListener("resize", guardedScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("scroll", guardedScroll);
+      window.removeEventListener("resize", guardedScroll);
+    };
   }, []);
 
   const posOf = (k: number) => {

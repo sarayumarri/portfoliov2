@@ -10,7 +10,7 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
   useEffect(() => {
     const cvs = ref.current!, ctx = cvs.getContext("2d")!, host = cvs.parentElement!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let W = 0, H = 0, raf = 0, visible = true, tick = 0;
+    let W = 0, H = 0, raf = 0, visible = false, tick = 0;
     let tx = 0, ty = 0;
 
     const size = () => {
@@ -35,8 +35,7 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
     };
 
     const draw = (time: number) => {
-      raf = requestAnimationFrame(draw);
-      if (!visible) return;
+      if (!visible || document.visibilityState !== "visible") return;
       if (tick++ % 20 === 0) findTarget();
       ctx.clearRect(0, 0, W, H);
       for (const f of flies) {
@@ -57,13 +56,27 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 7, 0, 6.28); ctx.fill();
       }
+      raf = requestAnimationFrame(draw);
     };
 
     // pause when scrolled out of view
-    const io = new IntersectionObserver((es) => { visible = es[0].isIntersecting; });
+    const io = new IntersectionObserver((es) => {
+      visible = es[0].isIntersecting;
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
+    });
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
+    };
     io.observe(host);
-    raf = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [gather]);
 
   return <canvas ref={ref} className="cr-fireflies" aria-hidden="true" />;

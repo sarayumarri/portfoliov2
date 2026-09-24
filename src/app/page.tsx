@@ -58,6 +58,7 @@ export default function Home() {
     }
 
     function onMove(e: MouseEvent) {
+      if (document.visibilityState !== "visible") return;
       const r = shell!.getBoundingClientRect();
       const x = e.clientX - r.left;
       const y = e.clientY - r.top;
@@ -81,7 +82,12 @@ export default function Home() {
     const RIGHT_SPEED = 0.14;
     const NAME_STALL = 170;
     let raf = 0;
+    let active = false;
+    const schedule = () => {
+      if (active && document.visibilityState === "visible") raf = requestAnimationFrame(tick);
+    };
     function tick() {
+      if (!active || document.visibilityState !== "visible") return;
       const y = window.scrollY;
       if (heroBgRef.current) {
         heroBgRef.current.style.transform = `translate3d(0, ${-y * BG_SPEED}px, 0)`;
@@ -93,10 +99,24 @@ export default function Home() {
         const held = Math.min(y, NAME_STALL);
         heroNameRef.current.style.transform = `translate3d(0, ${held}px, 0)`;
       }
-      raf = requestAnimationFrame(tick);
+      schedule();
     }
-    tick();
-    return () => cancelAnimationFrame(raf);
+    const io = new IntersectionObserver(([entry]) => {
+      active = entry.isIntersecting;
+      cancelAnimationFrame(raf);
+      schedule();
+    });
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      schedule();
+    };
+    if (heroRef.current) io.observe(heroRef.current);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   function fmt(s: number) {
@@ -186,7 +206,7 @@ export default function Home() {
             <audio
               ref={audioRef}
               src="/audio/golden-brown.mp3"
-              preload="metadata"
+              preload="none"
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               onEnded={() => {

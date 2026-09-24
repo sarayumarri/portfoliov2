@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import TurnstileField from "../../components/TurnstileField";
 
 const PHOTOS = [
-  { key: "alaska", src: "/images/summon-photo1.jpg", full: "/images/summon-photo1-full.jpg", label: "Alaska" },
-  { key: "trevi", src: "/images/summon-photo2.jpg", full: "/images/summon-photo2-full.jpg", label: "Trevi Fountain, Rome" },
-  { key: "eiffel", src: "/images/summon-photo3.jpg", full: "/images/summon-photo3-full.jpg", label: "Eiffel Tower, Paris" },
-  { key: "harbor", src: "/images/summon-photo4.jpg", full: "/images/summon-photo4-full.jpg", label: "St. Thomas" },
+  { key: "alaska", src: "/images/summon-photo1.webp", full: "/images/summon-photo1-full.webp", label: "Alaska" },
+  { key: "trevi", src: "/images/summon-photo2.webp", full: "/images/summon-photo2-full.webp", label: "Trevi Fountain, Rome" },
+  { key: "eiffel", src: "/images/summon-photo3.webp", full: "/images/summon-photo3-full.webp", label: "Eiffel Tower, Paris" },
+  { key: "harbor", src: "/images/summon-photo4.webp", full: "/images/summon-photo4-full.webp", label: "St. Thomas" },
 ];
 
 export default function Summons() {
@@ -56,7 +57,7 @@ export default function Summons() {
   return (
     <section className="summon-hero">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="summon-bg" src="/images/summon-bg.jpg" alt="" />
+      <Image className="summon-bg" src="/images/summon-bg.webp" alt="" fill sizes="100vw" priority />
       <div className="summon-overlay" />
 
       <div className="summon-content">
@@ -67,7 +68,7 @@ export default function Summons() {
               <div className="summon-subtitle">(Contact me)</div>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="summon-flower shell-item-spin" src="/images/summon-flower.png" alt="" />
+            <img className="summon-flower shell-item-spin" src="/images/summon-flower.webp" alt="" />
           </div>
 
           <form className="summon-form" onSubmit={handleSubmit}>
@@ -134,9 +135,11 @@ export default function Summons() {
             aria-label="Toggle travel photos"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={filmOpen ? "/images/summon-camera-open.png" : "/images/summon-camera.png"}
+            <Image
+              src={filmOpen ? "/images/summon-camera-open.webp" : "/images/summon-camera.webp"}
               alt="Click to see pictures from my travels"
+              width={392}
+              height={290}
             />
             {filmOpen &&
               PHOTOS.map((p, i) => (

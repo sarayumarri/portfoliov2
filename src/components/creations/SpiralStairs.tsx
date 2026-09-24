@@ -99,8 +99,9 @@ export default function SpiralStairs({ onOpen }: Props) {
       return Math.min(1, Math.max(0, -r.top / span));
     };
 
-    let current = 0, prevT = -1, last = -1, raf = 0;
+    let current = 0, prevT = -1, last = -1, raf = 0, visible = false;
     const frame = () => {
+      if (!visible || document.visibilityState !== "visible") return;
       const target = progress() * (N - 1);
       current += (target - current) * 0.2;
       if (Math.abs(target - current) < 0.0005) current = target;
@@ -121,9 +122,24 @@ export default function SpiralStairs({ onOpen }: Props) {
     };
 
     layout();
-    raf = requestAnimationFrame(frame);
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(frame);
+    });
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(frame);
+    };
+    io.observe(section);
+    document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("resize", layout);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", layout); };
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("resize", layout);
+    };
   }, []);
 
   const jumpTo = (i: number) => {

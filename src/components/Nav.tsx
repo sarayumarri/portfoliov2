@@ -19,7 +19,7 @@ export default function Nav() {
       <nav className="pill-nav" aria-label="Main navigation">
         <Link href="/" aria-label="Home" className="pill-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo-star.png" alt="" />
+          <img src="/images/logo-star.webp" alt="" />
         </Link>
         <div className="pill-tabs" role="tablist">
           {TABS.map((tab) => (
@@ -36,15 +36,15 @@ export default function Nav() {
         <div className="pill-icons">
           <a href="/Sarayu_Marri_Resume.pdf" target="_blank" rel="noopener" aria-label="Resume">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/icon-resume.png" alt="" />
+            <img src="/images/icon-resume.webp" alt="" />
           </a>
           <a href="https://www.linkedin.com/in/sarayumarri/" target="_blank" rel="noopener" aria-label="LinkedIn">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/icon-linkedin.png" alt="" />
+            <img src="/images/icon-linkedin.webp" alt="" />
           </a>
           <a href="https://github.com/sarayumarri" target="_blank" rel="noopener" aria-label="GitHub">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/icon-github.png" alt="" />
+            <img src="/images/icon-github.webp" alt="" />
           </a>
         </div>
       </nav>

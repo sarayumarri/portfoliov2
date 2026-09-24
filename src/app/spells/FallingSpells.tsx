@@ -234,8 +234,12 @@ export default function FallingSpells({
       });
 
       // ── Pause the simulation while the page section is offscreen ──
-      let visible = true;
-      const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+      let visible = false;
+      const io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        cancelAnimationFrame(raf);
+        if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(loop);
+      });
       io.observe(host);
       cleanups.push(() => io.disconnect());
 
@@ -256,6 +260,7 @@ export default function FallingSpells({
 
       let prev = performance.now();
       const loop = (t: number) => {
+        if (!visible || document.visibilityState !== "visible") return;
         const dt = Math.min(t - prev, 33);
         prev = t;
         if (visible) {
@@ -265,7 +270,12 @@ export default function FallingSpells({
         }
         raf = requestAnimationFrame(loop);
       };
-      raf = requestAnimationFrame(loop);
+      const onVisibility = () => {
+        cancelAnimationFrame(raf);
+        if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(loop);
+      };
+      document.addEventListener("visibilitychange", onVisibility);
+      cleanups.push(() => document.removeEventListener("visibilitychange", onVisibility));
 
       cleanups.push(() => {
         Composite.clear(world, false);

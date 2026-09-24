@@ -172,7 +172,7 @@ body{font-family:'Aileron',sans-serif;background:var(--leath3);color:var(--parch
 
 /* ═══════════════ HERO ═══════════════ */
 .hero{position:relative;min-height:100vh;overflow:hidden;}
-.hero-bg{position:absolute;left:0;right:0;top:-32%;height:164%;background-image:url('/images/home-bg.jpg');background-size:cover;background-position:center 44%;will-change:transform;}
+.hero-bg{position:absolute;left:0;right:0;top:-32%;height:164%;background-image:url('/images/home-bg.webp');background-size:cover;background-position:center 44%;will-change:transform;}
 .hero-overlay{position:absolute;inset:0;background:rgba(15,9,4,.13);}
 .hero-overlay::after{content:'';position:absolute;left:0;right:0;bottom:0;top:50%;background:linear-gradient(180deg,rgba(33,43,24,0) 0%,var(--green-dark) 92%);}
 .star-trail{position:absolute;pointer-events:none;z-index:2;mix-blend-mode:screen;background:radial-gradient(circle,#fffdf6 0%,#ffe9ad 55%,transparent 80%);filter:blur(.8px) drop-shadow(0 0 5px rgba(255,225,150,.7));clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:star-trail-fade 1.9s ease-out forwards;}
@@ -180,7 +180,7 @@ body{font-family:'Aileron',sans-serif;background:var(--leath3);color:var(--parch
   0%{opacity:1;transform:translate(-50%,-50%) scale(1);}
   100%{opacity:0;transform:translate(-50%,-50%) scale(.15);}
 }
-.corner-deco{position:absolute;width:110px;height:110px;z-index:6;opacity:.9;background-image:url('/images/corner-border.png');background-size:contain;background-repeat:no-repeat;}
+.corner-deco{position:absolute;width:110px;height:110px;z-index:6;opacity:.9;background-image:url('/images/corner-border.webp');background-size:contain;background-repeat:no-repeat;}
 .corner-deco.tr{top:22px;right:22px;transform:scaleX(-1);}
 .corner-deco.bl{bottom:22px;left:22px;transform:scaleY(-1);}
 .hero-top{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;padding:clamp(90px,15vw,180px) clamp(24px,6vw,70px) 0;}
@@ -595,7 +595,7 @@ body.no-scroll-page .summon-content{max-height:100%;overflow:hidden;}
 .cr-featured{position:relative;padding:40px 0 0;overflow:hidden;}
 /* castle wall band behind the featured windows */
 .cr-wall-band{position:relative;margin-top:44px;padding:64px clamp(20px,5vw,70px) 96px;
-  background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 22%,transparent 80%,rgba(0,0,0,.32)),linear-gradient(rgba(58,70,40,.28),rgba(58,70,40,.28)),url('/images/creations/wall-band.jpg') center/cover no-repeat;
+  background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 22%,transparent 80%,rgba(0,0,0,.32)),linear-gradient(rgba(58,70,40,.28),rgba(58,70,40,.28)),url('/images/creations/wall-band.webp') center/cover no-repeat;
   box-shadow:0 -6px 18px rgba(0,0,0,.25);}
 .cr-lace{position:absolute;left:0;right:0;top:-44px;height:64px;pointer-events:none;z-index:3;background:url('/images/creations/lace-trim.webp') 0 100%/auto 64px repeat-x;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));}
 .cr-plants{position:absolute;left:0;right:0;top:-14px;bottom:0;overflow:hidden;pointer-events:none;z-index:1;}

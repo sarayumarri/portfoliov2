@@ -8,58 +8,58 @@ const EXPERIENCES = [
     role: "Tech and Business Intern",
     dates: "May 2026 - June 2026",
     desc: "I worked on redesigning Meynde's online presence while I was in Barcelona. I mapped out their services, audiences, and site structure in Figma, with a focus on making information easier to navigate for an international, multilingual audience. I then turned the designs into a working React and JavaScript prototype. Since I was working with a healthcare organization, the project also required designing around strict data-security limitations.",
-    frame: "frame-ornate1.png",
+    frame: "frame-ornate1.webp",
     frameAspect: 1.26,
     inset: { top: 20.7, bottom: 25.4, left: 15.6, right: 15.3 },
-    photos: ["meynde1.jpg", "meynde2.jpg", "meynde3.jpg"],
+    photos: ["meynde1.webp", "meynde2.webp", "meynde3.webp"],
     side: "right",
-    dash: "dash4.png",
+    dash: "dash4.webp",
   },
   {
     org: "Bank of New York",
     role: "Software Engineering Intern",
     dates: "January 2026 - Present",
     desc: "I built the frontend for Peggy, an internal system that detects and automatically responds to infrastructure issues. Using React and backend APIs, I created a visualization layer for monitoring observability data and tracking system activity in real time. The interface sits on top of a containerized pipeline that can detect and remediate issues in under a minute.",
-    frame: "frame-plain-border.png",
+    frame: "frame-plain-border.webp",
     frameAspect: 1.25,
     inset: { top: 8.7, bottom: 21.2, left: 13.6, right: 14.3 },
-    photos: ["bny1.jpg"],
+    photos: ["bny1.webp"],
     side: "left",
-    dash: "dash2.png",
+    dash: "dash2.webp",
   },
   {
     org: "ReEnvisioning Reality Lab",
     role: "Undergraduate Researcher",
     dates: "January 2026 - September 2026",
     desc: "I helped build a large-scale Unity environment for research on navigation and human-agent interaction. I worked on the city itself, including roads, vehicles, pedestrians, weather, and environmental layouts using EasyRoads3D. I also worked with HDRI rendering and environment systems to make the simulation more realistic.",
-    frame: "frame-oval.png",
+    frame: "frame-oval.webp",
     frameAspect: 0.73,
     inset: { top: 10.6, bottom: 20.5, left: 11.5, right: 21.6 },
-    photos: ["vr1.jpg"],
+    photos: ["vr1.webp"],
     side: "right",
-    dash: "dash3.png",
+    dash: "dash3.webp",
   },
   {
     org: "Knight Hacks",
     role: "Hackathon Organizer",
     dates: "January 2026 - Present",
     desc: "I help organize KnightHacks IX, working on event logistics, planning, and attendee experience. For KnightHacks VIII, I led decoration planning and setup for 1,000+ attendees, including purchasing materials and coordinating physical spaces. I supported logistics and day-of operations for BloomHacks, KnightHacks' summer hackathon. I also attended MLH HackCon in New York to connect with organizers and learn from other hackathon communities.",
-    frame: "frame-filigree.png",
+    frame: "frame-filigree.webp",
     frameAspect: 1.23,
     inset: { top: 16.2, bottom: 26.6, left: 18.6, right: 14.5 },
-    photos: ["knighthacks-photo.jpg", "kh2.jpg", "kh3.jpg", "kh4.jpg"],
+    photos: ["knighthacks-photo.webp", "kh2.webp", "kh3.webp", "kh4.webp"],
     side: "left",
-    dash: "dash1.png",
+    dash: "dash1.webp",
   },
   {
     org: "Burnett Honors College",
     role: "Hackathon Organizer",
     dates: "May 2025 - December 2025",
     desc: "I served as a Symposium Team Leader and Orientation Ambassador for UCF's Burnett Honors College. I led weekly discussions for 15-20 students and advised 20+ incoming students on academics and course planning. I also supported orientation programming for 200+ students, helping new students transition into the UCF community.",
-    frame: "frame-simple.png",
+    frame: "frame-simple.webp",
     frameAspect: 1.49,
     inset: { top: 11.1, bottom: 27.5, left: 11.1, right: 27.3 },
-    photos: ["bhc1.jpg", "bhc2.jpg"],
+    photos: ["bhc1.webp", "bhc2.webp"],
     side: "right",
     dash: null,
   },
@@ -68,10 +68,10 @@ const EXPERIENCES = [
 const CYCLE_MS = 3500;
 
 const BLOOM_IMAGES = [
-  "flower-pansy.png",
-  "flower-buttercup.png",
-  "flower-stars.png",
-  "flower-spray.png",
+  "flower-pansy.webp",
+  "flower-buttercup.webp",
+  "flower-stars.webp",
+  "flower-spray.webp",
 ];
 
 type Bloom = {
@@ -128,8 +128,10 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let rafId = 0;
+    let visible = false;
 
     function apply() {
+      if (!visible || document.visibilityState !== "visible") return;
       const viewportCenter = window.innerHeight / 2;
       blooms.forEach((b, i) => {
         const el = imgRefs.current[i];
@@ -144,12 +146,28 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
       rafId = requestAnimationFrame(apply);
     }
 
+    const vine = imgRefs.current[0]?.parentElement;
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      cancelAnimationFrame(rafId);
+      if (visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
+    });
+    const onVisibility = () => {
+      cancelAnimationFrame(rafId);
+      if (visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
+    };
+    if (vine) io.observe(vine);
+    document.addEventListener("visibilitychange", onVisibility);
+
     // driven by a continuous rAF loop rather than the "scroll" event --
     // some layouts scroll a nested container instead of window, which
     // would silently never fire a window scroll listener. rAF is
     // agnostic to whatever element is actually scrolling.
-    rafId = requestAnimationFrame(apply);
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      cancelAnimationFrame(rafId);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -193,8 +211,14 @@ function usePhotoCycle(length: number) {
 
   useEffect(() => {
     restart();
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden" && timerRef.current) clearInterval(timerRef.current);
+      if (document.visibilityState === "visible") restart();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [length]);
@@ -312,13 +336,13 @@ export default function Adventures() {
         <h1 className="adv-title">ADVENTURES</h1>
         <div className="adv-subtitle">(Experience)</div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="adv-daisy" src="/images/adventures/daisy.png" alt="" />
+        <img className="adv-daisy" src="/images/adventures/daisy.webp" alt="" />
       </section>
 
       <div className="adv-torn-wrap">
         <img
           className="adv-torn"
-          src="/images/adventures/paper-transition.png"
+          src="/images/adventures/paper-transition.webp"
           alt=""
         />
       </div>
@@ -338,7 +362,7 @@ export default function Adventures() {
               rowRefs.current[i] = el;
             }}
           >
-            <div className={`adv-frame-outer${exp.frame === "frame-oval.png" ? " oval" : ""}`}>
+            <div className={`adv-frame-outer${exp.frame === "frame-oval.webp" ? " oval" : ""}`}>
               <div
                 className="adv-frame-ratio"
                 style={{ paddingTop: `${(1 / exp.frameAspect) * 100}%` }}

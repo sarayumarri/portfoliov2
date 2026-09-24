@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import FallingSpells from "./FallingSpells";
-import SpellsScene from "./SpellsScene";
+import dynamic from "next/dynamic";
+
+const FallingSpells = dynamic(() => import("./FallingSpells"), { ssr: false });
+const SpellsScene = dynamic(() => import("./SpellsScene"), { ssr: false });
 
 const ATTRS = [
   { label: "Resourcefulness", value: 95 },
@@ -16,7 +18,7 @@ const ATTRS = [
 const SUITS = [
   {
     key: "clubs",
-    img: "/images/spells-clubs.png",
+    img: "/images/spells-clubs.webp",
     title: "Programming Languages",
     icons: [
       { slug: "c", label: "C" },
@@ -30,7 +32,7 @@ const SUITS = [
   },
   {
     key: "spades",
-    img: "/images/spells-spades.png",
+    img: "/images/spells-spades.webp",
     title: "Frameworks & Libraries",
     icons: [
       { slug: "react", label: "React" },
@@ -41,7 +43,7 @@ const SUITS = [
   },
   {
     key: "hearts",
-    img: "/images/spells-hearts.png",
+    img: "/images/spells-hearts.webp",
     title: "Design & Prototype",
     icons: [
       { slug: "figma", label: "Figma" },
@@ -51,7 +53,7 @@ const SUITS = [
   },
   {
     key: "diamonds",
-    img: "/images/spells-diamonds.png",
+    img: "/images/spells-diamonds.webp",
     title: "Development Tools",
     icons: [
       { slug: "unity", label: "Unity" },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import Fireflies from "@/components/creations/Fireflies";
 
 const RUMORS = [
@@ -16,25 +17,25 @@ const POSTCARDS = [
   {
     key: "wander",
     title: "Wander",
-    img: "/images/wander.jpg",
+    img: "/images/wander.webp",
     desc: "Interning in Barcelona was what really sparked my love for travel. Since then, I've become especially drawn to solo travel and the freedom of finding my own way through unfamiliar places. Alaska and France are two of my favorite places I've visited, and Iceland is my dream trip.",
   },
   {
     key: "feel",
     title: "Feel",
-    img: "/images/feel.jpg",
+    img: "/images/feel.webp",
     desc: "I've loved Conan Gray since middle school, so seeing him live on the Wishbone World Tour felt like a dream come true. I've always adored live music, the feeling of being surrounded by thousands of people who are all experiencing the same song together is something I never want to take for granted.",
   },
   {
     key: "create",
     title: "Create",
-    img: "/images/create.jpg",
+    img: "/images/create.webp",
     desc: "I've always been an artist, building multiple portfolios throughout high school and experimenting with everything from digital art and photography to sculpture and painting. I'm just as fascinated by the art that already exists, and I love traveling to see pieces I admire in person, Van Gogh is my favorite artist.",
   },
   {
     key: "connect",
     title: "Connect",
-    img: "/images/connect.jpg",
+    img: "/images/connect.webp",
     desc: "I believe the people you meet and the communities you build can shape your entire experience. From mentoring students as they found their place in college to now helping build the hacker community as a hackathon organizer, I want to create the kind of spaces where people can find their people and, when representation is hard to find, be that representation for someone else.",
   },
   {
@@ -96,10 +97,10 @@ const ARTIST_PHOTOS: Record<string, { src: string; w: number; h: number; alt: st
 };
 
 const BAG_ITEMS = [
-  { key: "coffee", img: "/images/bag/coffee.png", x: -128, y: -81, w: 100, rot: -8 },
-  { key: "headphones", img: "/images/bag/headphones.png", x: 124, y: -72, w: 120, rot: 10 },
-  { key: "macbook", img: "/images/bag/macbook.png", x: -120, y: 102, w: 144, rot: -6 },
-  { key: "bunny", img: "/images/bag/bunny.png", x: 130, y: 98, w: 73, rot: 12 },
+  { key: "coffee", img: "/images/bag/coffee.webp", x: -128, y: -81, w: 100, rot: -8 },
+  { key: "headphones", img: "/images/bag/headphones.webp", x: 124, y: -72, w: 120, rot: 10 },
+  { key: "macbook", img: "/images/bag/macbook.webp", x: -120, y: 102, w: 144, rot: -6 },
+  { key: "bunny", img: "/images/bag/bunny.webp", x: 130, y: 98, w: 73, rot: 12 },
 ];
 
 export default function AboutSection() {
@@ -161,19 +162,29 @@ export default function AboutSection() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let ticking = false;
+    let visible = false;
     function onScroll() {
-      if (!ticking) {
+      if (visible && document.visibilityState === "visible" && !ticking) {
         ticking = true;
         requestAnimationFrame(() => {
           ticking = false;
-          updateColumns();
+          if (visible && document.visibilityState === "visible") updateColumns();
         });
       }
     }
-    updateColumns();
+    const section = artistSecRef.current;
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) onScroll();
+    });
+    const onVisibility = () => { if (document.visibilityState === "visible" && visible) onScroll(); };
+    if (section) io.observe(section);
+    document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
@@ -189,9 +200,11 @@ export default function AboutSection() {
         <Fireflies gather={false} />
       <section className="about-sec">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           className="about-static-img"
-          src="/images/about-static.png"
+          src="/images/about-static.webp"
+          width={1366}
+          height={1053}
           alt="About Me: Sarayu Marri, Computer Science and Digital Media student at UCF Burnett Honors College, 2x BNY, Meynde, Knight Hacks org, XR researcher. Class Multiclass, Speciality Interactive Experiences, Guild University of Central Florida, Quest Bring ideas to life."
         />
       </section>
@@ -353,7 +366,7 @@ export default function AboutSection() {
                 </div>
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="bag-main" src="/images/bag/bag.png" alt="My bag" loading="lazy" />
+              <img className="bag-main" src="/images/bag/bag.webp" alt="My bag" loading="lazy" />
             </div>
             <p className="bag-hint">
               {bagOpen ? "Click to put it all away" : "Click to find out!"}
@@ -366,7 +379,7 @@ export default function AboutSection() {
       <section className="postcards-sec">
         <div className="quest-divider">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/sword-gold.png" className="divider-sword" alt="" loading="lazy" />
+          <img src="/images/sword-gold.webp" className="divider-sword" alt="" loading="lazy" />
         </div>
         <h2 className="postcards-heading">POSTCARDS FROM MY JOURNEY</h2>
 

@@ -1,14 +1,16 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import dynamic from "next/dynamic";
 import { ALL_BY_ID, PRESENTATION } from "@/data/creations";
 import FeaturedWindows from "./FeaturedWindows";
 import SpiralStairs from "./SpiralStairs";
-import ProjectOverlay from "./ProjectOverlay";
 import MediaView from "./MediaView";
 import { StoneWindowDefs } from "./StoneWindow";
 import Fireflies from "./Fireflies";
 import brick from "./brick-wall.jpg"; // bundled, so it never 404s
+
+const ProjectOverlay = dynamic(() => import("./ProjectOverlay"));
 
 export default function CreationsClient() {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export default function CreationsClient() {
       <section className="postcards-sec cr-postcards" aria-labelledby="cr-show-h">
         <div className="quest-divider">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="divider-sword" src="/images/sword-gold.png" alt="" />
+          <img className="divider-sword" src="/images/sword-gold.webp" alt="" />
         </div>
         <h2 id="cr-show-h" className="postcards-heading">PRESENTATIONS / OUTREACH</h2>
         <button type="button" className="cr-pres" onClick={() => open(pres.id)}>

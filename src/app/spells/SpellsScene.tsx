@@ -113,8 +113,13 @@ export default function SpellsScene() {
     });
     ro.observe(host);
 
-    let visible = true;
-    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
+    let visible = false;
+    let raf = 0;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(loop);
+    });
     io.observe(host);
 
     const draw = (t: number) => {
@@ -186,18 +191,23 @@ export default function SpellsScene() {
 
     };
 
-    let raf = 0;
     const loop = (t: number) => {
-      if (visible) draw(t);
+      if (!visible || document.visibilityState !== "visible") return;
+      draw(t);
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(loop);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(rz);
       ro.disconnect();
       io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
