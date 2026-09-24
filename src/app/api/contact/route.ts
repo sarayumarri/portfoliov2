@@ -84,8 +84,9 @@ export async function POST(req: Request) {
 
   const db = supabase();
   if (!db) {
+    console.error("contact: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
     return NextResponse.json(
-      { error: "Server is missing Supabase keys. Add them to .env.local and restart." },
+      { error: "Couldn't send right now. Try again later." },
       { status: 500 }
     );
   }

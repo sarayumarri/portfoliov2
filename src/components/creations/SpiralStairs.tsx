@@ -32,7 +32,7 @@ export default function SpiralStairs({ onOpen }: Props) {
 
   useEffect(() => {
     const section = sectionRef.current!, helix = helixRef.current!, pillar = pillarRef.current!;
-    const geo = { step: 0 };
+    const geo = { step: 0, small: false };
 
     // speckled stone texture with chisel marks, drawn once and handed to the CSS
     const tex = (light: boolean, seed: number) => {
@@ -51,11 +51,12 @@ export default function SpiralStairs({ onOpen }: Props) {
     // place cards and stone steps around the column
     const layout = () => {
       const w = window.innerWidth, h = window.innerHeight, small = w < 760;
-      const cw = small ? Math.min(220, w * 0.58) : Math.min(290, Math.max(220, w * 0.19));
+      const cw = small ? Math.min(200, w * 0.5) : Math.min(290, Math.max(220, w * 0.19));
       const ch = cw * 1.42;
-      const R = small ? w * 0.34 : Math.min(470, Math.max(300, w * 0.28));
-      const step = ch * 0.64;
+      const R = small ? w * 0.56 : Math.min(470, Math.max(300, w * 0.28));
+      const step = ch * (small ? 0.9 : 0.64);
       geo.step = step;
+      geo.small = small;
 
       cardRefs.current.forEach((c, i) => {
         if (!c) return;
@@ -110,7 +111,8 @@ export default function SpiralStairs({ onOpen }: Props) {
       // only opacity changes per frame (cheap, handled by the GPU)
       cardRefs.current.forEach((c, i) => {
         if (!c) return;
-        const o = Math.max(0.15, 1 - Math.abs(i - t) * 0.42).toFixed(2);
+        const fall = geo.small ? 0.85 : 0.42, floor = geo.small ? 0.06 : 0.15;
+        const o = Math.max(floor, 1 - Math.abs(i - t) * fall).toFixed(2);
         if (c.style.opacity !== o) c.style.opacity = o;
       });
       const a = Math.round(t);
