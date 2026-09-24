@@ -21,6 +21,7 @@
 
 import { useEffect, useRef } from "react";
 
+/* Spells — ocean scene */
 // ── Tweak here ───────────────────────────────────────────────
 const PALE = "#E6DDC6"; // cream, same as .spells-page
 const WAVES = [

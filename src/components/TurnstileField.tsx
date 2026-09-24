@@ -3,7 +3,7 @@
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { forwardRef } from "react";
 
-// test key that always passes on localhost
+/* Contact — bot protection */
 const TEST_SITE_KEY = "1x00000000000000000000AA";
 
 type Props = { onToken: (token: string) => void };

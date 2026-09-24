@@ -5,14 +5,14 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-// limits
+// Validation limits
 const MAX_NAME = 100;
 const MAX_EMAIL = 200;
 const MAX_MESSAGE = 5000;
 const MAX_PER_HOUR = 3;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// clients
+// Database client
 function supabase() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,7 +30,7 @@ function getIp(req: Request) {
   return (fwd ? fwd.split(",")[0] : req.headers.get("x-real-ip")) || "unknown";
 }
 
-// turnstile
+// Turnstile verification
 async function verifyTurnstile(token: string | undefined, ip: string) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) return true; // not set up yet, skip
@@ -44,7 +44,7 @@ async function verifyTurnstile(token: string | undefined, ip: string) {
   return data.success === true;
 }
 
-// spam guess
+// Spam detection
 function looksSpammy(message: string) {
   const links = (message.match(/https?:\/\//gi) || []).length;
   return links > 2;
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
   const company = String(payload.company ?? "");
   const token = payload.turnstileToken ? String(payload.turnstileToken) : undefined;
 
-  // honeypot: pretend it worked
+  // Honeypot response
   if (company) return NextResponse.json({ ok: true });
 
   if (!name || !email || !message) {
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // rate limit
+  // Rate limit
   const ipHash = hashIp(ip);
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { count } = await db
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // save
+  // Save message
   const status = looksSpammy(message) ? "spam" : "new";
   const { error: dbError } = await db.from("contact_messages").insert({
     name,
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Something went wrong, try again in a moment." }, { status: 500 });
   }
 
-  // ping
+  // Send notification
   const notify = process.env.CONTACT_NOTIFY || "ping";
   if (status === "new" && notify !== "off" && process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL) {
     try {

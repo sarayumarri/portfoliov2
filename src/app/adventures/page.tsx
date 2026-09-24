@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+/* Adventures — photo carousel */
 const EXPERIENCES = [
   {
     org: "Meynde Centro M\u00e9dico",
@@ -85,8 +86,7 @@ type Bloom = {
   speed: number;
 };
 
-// deterministic seeded RNG so server and client render the exact same
-// "random" layout -- Math.random() here would cause hydration mismatches
+// Seeded flower layout
 function mulberry32(seed: number) {
   return function () {
     seed |= 0;
@@ -159,10 +159,6 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
     if (vine) io.observe(vine);
     document.addEventListener("visibilitychange", onVisibility);
 
-    // driven by a continuous rAF loop rather than the "scroll" event --
-    // some layouts scroll a nested container instead of window, which
-    // would silently never fire a window scroll listener. rAF is
-    // agnostic to whatever element is actually scrolling.
     return () => {
       cancelAnimationFrame(rafId);
       io.disconnect();
@@ -174,7 +170,6 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
   return (
     <div className={`adv-flower-vine adv-flower-vine-${side}`} aria-hidden="true">
       {blooms.map((b, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           key={i}
           ref={(el) => {
@@ -259,7 +254,6 @@ function AdventurePhoto({
       aria-label={`Expand photo: ${alt}`}
     >
       {photos.map((src, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           key={src}
           className={`adv-photo${i === index ? " active" : ""}`}
@@ -303,7 +297,7 @@ export default function Adventures() {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // scroll-triggered zoom + bounce reveal, once per row
+  // Reveal experience rows
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) {
@@ -345,15 +339,15 @@ export default function Adventures() {
           src="/images/adventures/paper-transition.webp"
           alt=""
         />
+        <p className="adv-tagline">
+          Every knight has a few adventures worth telling. Here are some of the experiences that have shaped my journey so far.
+        </p>
       </div>
 
       <section className="adv-timeline">
         <FlowerVine side="left" blooms={LEFT_BLOOMS} />
         <FlowerVine side="right" blooms={RIGHT_BLOOMS} />
         <div className="adv-timeline-inner">
-        <p className="adv-tagline">
-          Every knight has a few adventures worth telling. Here are some of the experiences that have shaped my journey so far.
-        </p>
         {EXPERIENCES.map((exp, i) => (
           <div
             className={`adv-row adv-row-${exp.side}`}

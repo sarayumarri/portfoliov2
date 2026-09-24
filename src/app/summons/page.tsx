@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import TurnstileField from "../../components/TurnstileField";
 
+/* Summons — contact form */
 const PHOTOS = [
   { key: "alaska", src: "/images/summon-photo1.webp", full: "/images/summon-photo1-full.webp", label: "Alaska" },
   { key: "trevi", src: "/images/summon-photo2.webp", full: "/images/summon-photo2-full.webp", label: "Trevi Fountain, Rome" },
@@ -56,7 +57,6 @@ export default function Summons() {
 
   return (
     <section className="summon-hero">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <Image className="summon-bg" src="/images/summon-bg.webp" alt="" fill sizes="100vw" priority />
       <div className="summon-overlay" />
 
@@ -134,7 +134,6 @@ export default function Summons() {
             tabIndex={0}
             aria-label="Toggle travel photos"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
               src={filmOpen ? "/images/summon-camera-open.webp" : "/images/summon-camera.webp"}
               alt="Click to see pictures from my travels"

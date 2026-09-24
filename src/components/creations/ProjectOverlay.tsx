@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { TEAM_LINKS, type Creation } from "@/data/creations";
 import MediaView from "./MediaView";
 
+/* Creations — project overlay */
 export default function ProjectOverlay({ project, onClose }: { project: Creation; onClose: () => void }) {
   const slides = project.media;
   const count = slides.length;

@@ -10,6 +10,7 @@ import { StoneWindowDefs } from "./StoneWindow";
 import Fireflies from "./Fireflies";
 import brick from "./brick-wall.jpg"; // bundled, so it never 404s
 
+/* Creations — page composition */
 const ProjectOverlay = dynamic(() => import("./ProjectOverlay"));
 
 export default function CreationsClient() {

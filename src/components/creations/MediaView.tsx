@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { isVideo, posterOf, smallOf } from "@/data/creations";
 
+/* Creations — media loader */
 type Props = {
   src: string;
   alt?: string;

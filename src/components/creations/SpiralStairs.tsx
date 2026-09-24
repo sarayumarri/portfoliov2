@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CREATIONS } from "@/data/creations";
 import MediaView from "./MediaView";
 
+/* Creations — spiral stairs */
 const THETA = 58;  // degrees between projects
 const STEPS = 5;   // stone steps per project
 const N = CREATIONS.length;

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
+/* Creations — firefly canvas */
 // soft gold fireflies that wander and gather near the centered window
 // gather: drift toward the centered featured window (Creations). false = just wander.
 export default function Fireflies({ gather = true }: { gather?: boolean }) {

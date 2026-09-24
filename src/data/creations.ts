@@ -19,7 +19,6 @@ export type Creation = {
   desc: string;
   tags: string[];
   link?: { label: string; url: string }; // leave out for no button
-  pdf?: string; // shown scrollable inside the pop-up instead of a gallery
   pdfCover?: string;
   pdfPages?: string[]; // the PDF as page images, scrolled right in the pop-up
   media: Media;
@@ -115,7 +114,6 @@ export const PRESENTATION: Creation = {
   desc: "Not So Surelocks was a UCF STEM Day presentation that introduced elementary and middle school students to forensic science through an interactive investigation. Our team designed a museum-style crime scene where students rotated through hands-on stations covering fingerprints, footprints, paint analysis, and other forms of evidence to solve the fictional theft of the Mona Lisa. The experience was developed around audience research and was adapted throughout the event based on student engagement, age, and feedback.",
   tags: ["Outreach", "Audience Research", "Exhibit Design"],
   link: { label: "Open in new tab", url: "/creations/Not_So_Surelocks_Portfolio.pdf" },
-  pdf: "/creations/Not_So_Surelocks_Portfolio.pdf", // shown right in the pop-up, scrollable
   pdfCover: "/creations/not-so-surelocks-cover.webp", // page 1 of the PDF
   pdfPages: Array.from({ length: 13 }, (_, i) => `/creations/not-so-surelocks/page-${String(i + 1).padStart(2, "0")}.webp`),
   media: [],

@@ -1,5 +1,4 @@
-// Hand built stone lancet window. With a cover image the glass is replaced
-// by the image; without one it shows diamond leaded panes.
+// Creations — stone window
 
 const STONES = ["#C3B79E", "#B8AB91", "#AEA186", "#BFB297", "#A99B80", "#B4A78C"];
 

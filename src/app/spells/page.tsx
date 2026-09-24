@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
+/* Spells — skill deck */
 const FallingSpells = dynamic(() => import("./FallingSpells"), { ssr: false });
 const SpellsScene = dynamic(() => import("./SpellsScene"), { ssr: false });
 

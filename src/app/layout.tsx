@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
+/* App shell and metadata */
 export const metadata: Metadata = {
   metadataBase: new URL("https://sarayu.dev"),
   title: "Sarayu Marri",

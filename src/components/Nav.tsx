@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+/* Shared navigation */
 const TABS = [
   { href: "/", label: "HOME" },
   { href: "/adventures", label: "ADVENTURES" },

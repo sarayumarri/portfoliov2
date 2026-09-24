@@ -18,13 +18,14 @@
 import { useEffect, useRef } from "react";
 import type { Body as MatterBody } from "matter-js";
 
+/* Spells — falling logos */
 export type FallingLogo = { slug: string; label: string };
 
 type Props = {
   logos: FallingLogo[];
   /** Logo tint. */
   color?: string;
-  /** 0–1 */
+  /** Opacity from zero to one. */
   opacity?: number;
   /** Soft shadow baked around each logo so light logos still read on white foam. "" = none */
   shadow?: string;
@@ -32,7 +33,7 @@ type Props = {
 
 type LogoBody = MatterBody & { sprite?: HTMLCanvasElement };
 
-// Taps on these elements don't shove logos (so opening cards feels clean)
+// Elements excluded from pushes
 const NO_PUSH =
   ".spell-deck, .shell-item-spin, .spells-attrs-panel, .spells-bottle, .spells-scroll, a, button";
 

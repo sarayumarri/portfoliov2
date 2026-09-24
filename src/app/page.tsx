@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import AboutSection from "@/components/AboutSection";
 
+/* Home — hero and player */
 const ROLES = ["Developer", "Designer", "Student", "Software Engineer", "Artist", "Researcher"];
 
 export default function Home() {
@@ -11,8 +12,6 @@ export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
-  const fillRef = useRef<HTMLDivElement>(null);
-  const knobRef = useRef<HTMLDivElement>(null);
   const heroBgRef = useRef<HTMLDivElement>(null);
   const heroNameRef = useRef<HTMLHeadingElement>(null);
   const heroRightRef = useRef<HTMLDivElement>(null);
@@ -22,7 +21,7 @@ export default function Home() {
   const [dur, setDur] = useState(0);
   const [hint, setHint] = useState("");
 
-  // role cycling
+  // Role cycling
   useEffect(() => {
     const id = setInterval(() => {
       setRoleOpacity(0);
@@ -37,7 +36,7 @@ export default function Home() {
     return () => clearInterval(id);
   }, []);
 
-  // magical star trail following the cursor
+  // Cursor star trail
   useEffect(() => {
     const shell = heroRef.current;
     if (!shell) return;
@@ -74,9 +73,7 @@ export default function Home() {
     };
   }, []);
 
-  // hero parallax: background drifts slower than scroll, the role/player
-  // column drifts at its own rate, and the name freezes in place for the
-  // first NAME_STALL px of scroll before it starts moving again.
+  // Hero parallax loop
   useEffect(() => {
     const BG_SPEED = 0.32;
     const RIGHT_SPEED = 0.14;
@@ -170,12 +167,10 @@ export default function Home() {
               <div className="pbar" ref={barRef} onClick={seek}>
                 <div
                   className="pbar-fill"
-                  ref={fillRef}
                   style={{ width: dur ? `${(cur / dur) * 100}%` : "0%" }}
                 />
                 <div
                   className="pbar-knob"
-                  ref={knobRef}
                   style={{ left: dur ? `${(cur / dur) * 100}%` : "0%" }}
                 />
               </div>

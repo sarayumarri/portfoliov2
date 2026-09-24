@@ -6,6 +6,7 @@ import { ALL_BY_ID, FEATURED_IDS } from "@/data/creations";
 import StoneWindow from "./StoneWindow";
 import MediaView from "./MediaView";
 
+/* Creations — featured windows */
 type Props = { onOpen: (id: string) => void };
 
 const IMG = "/images/creations";

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Fireflies from "@/components/creations/Fireflies";
 
+/* About — profile and postcards */
 const RUMORS = [
   "Electric guitar player, occasionally joined by my violinist brother for covers.",
   "Musical theatre has a special place in my heart, seeing Hadestown on Broadway changed my life.",
@@ -199,7 +200,6 @@ export default function AboutSection() {
         </div>
         <Fireflies gather={false} />
       <section className="about-sec">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <Image
           className="about-static-img"
           src="/images/about-static.webp"
