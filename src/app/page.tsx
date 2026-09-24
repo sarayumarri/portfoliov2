@@ -10,16 +10,9 @@ export default function Home() {
   const [role, setRole] = useState(ROLES[0]);
   const [roleOpacity, setRoleOpacity] = useState(1);
   const heroRef = useRef<HTMLElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
   const heroBgRef = useRef<HTMLDivElement>(null);
   const heroNameRef = useRef<HTMLHeadingElement>(null);
   const heroRightRef = useRef<HTMLDivElement>(null);
-
-  const [playing, setPlaying] = useState(false);
-  const [cur, setCur] = useState(0);
-  const [dur, setDur] = useState(0);
-  const [hint, setHint] = useState("");
 
   // Role cycling
   useEffect(() => {
@@ -116,34 +109,6 @@ export default function Home() {
     };
   }, []);
 
-  function fmt(s: number) {
-    if (!isFinite(s)) return "0:00";
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m}:${sec < 10 ? "0" : ""}${sec}`;
-  }
-
-  function togglePlay() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (audio.paused) {
-      audio.play().catch(() => {
-        setHint("drop golden-brown.mp3 into public/audio/ to make this play");
-      });
-    } else {
-      audio.pause();
-    }
-  }
-
-  function seek(e: React.MouseEvent) {
-    const audio = audioRef.current;
-    const bar = barRef.current;
-    if (!audio || !bar || !audio.duration) return;
-    const r = bar.getBoundingClientRect();
-    const pct = (e.clientX - r.left) / r.width;
-    audio.currentTime = pct * audio.duration;
-  }
-
   return (
     <>
       <section className="hero" ref={heroRef}>
@@ -158,66 +123,6 @@ export default function Home() {
           MARRI
         </h1>
         <div className="hero-right" ref={heroRightRef}>
-          <div className="player">
-            <div className="player-title">
-              {playing ? "Now playing \u2014 Golden Brown (Slowed)" : "Golden Brown \u2014 The Stranglers"}
-            </div>
-            <div className="player-row">
-              <span className="ptime">{fmt(cur)}</span>
-              <div className="pbar" ref={barRef} onClick={seek}>
-                <div
-                  className="pbar-fill"
-                  style={{ width: dur ? `${(cur / dur) * 100}%` : "0%" }}
-                />
-                <div
-                  className="pbar-knob"
-                  style={{ left: dur ? `${(cur / dur) * 100}%` : "0%" }}
-                />
-              </div>
-              <span className="ptime right">{fmt(dur)}</span>
-            </div>
-            <div className="player-controls">
-              <button className="pctl" aria-label="Previous" title="Playlist coming soon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
-                </svg>
-              </button>
-              <button className="pctl big" aria-label="Play" onClick={togglePlay}>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  {playing ? (
-                    <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-                  ) : (
-                    <path d="M8 5v14l11-7z" />
-                  )}
-                </svg>
-              </button>
-              <button className="pctl" aria-label="Next" title="Playlist coming soon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z" />
-                </svg>
-              </button>
-            </div>
-            <div className="player-hint">{hint}</div>
-            <audio
-              ref={audioRef}
-              src="/audio/golden-brown.mp3"
-              preload="none"
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onEnded={() => {
-                setPlaying(false);
-                if (audioRef.current) audioRef.current.currentTime = 0;
-              }}
-              onLoadedMetadata={(e) => {
-                setDur(e.currentTarget.duration);
-                setHint("");
-              }}
-              onError={() =>
-                setHint("drop golden-brown.mp3 into public/audio/ to make this play")
-              }
-              onTimeUpdate={(e) => setCur(e.currentTarget.currentTime)}
-            />
-          </div>
           <div className="hero-role" style={{ opacity: roleOpacity }}>
             {role}
           </div>

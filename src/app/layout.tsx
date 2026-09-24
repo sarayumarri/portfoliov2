@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import SpotifyPlayer from "@/components/SpotifyPlayer";
 import "./globals.css";
 
 /* App shell and metadata */
@@ -39,6 +40,7 @@ export default function RootLayout({
       </head>
       <body>
         <Nav />
+        <SpotifyPlayer />
         {children}
         <Footer />
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { TEAM_LINKS, type Creation } from "@/data/creations";
 import MediaView from "./MediaView";
 
@@ -116,9 +117,15 @@ export default function ProjectOverlay({ project, onClose }: { project: Creation
             <div className="cr-tags">{project.tags.map((t) => <span key={t}>{t}</span>)}</div>
           </div>
           {project.link?.url && (
-            <a className="cr-cta" href={project.link.url} target="_blank" rel="noopener">
-              {project.link.label} <span aria-hidden="true">&#8599;</span>
-            </a>
+            project.link.url.startsWith("/") ? (
+              <Link className="cr-cta" href={project.link.url} target="_blank" rel="noopener">
+                {project.link.label} <span aria-hidden="true">&#8599;</span>
+              </Link>
+            ) : (
+              <a className="cr-cta" href={project.link.url} target="_blank" rel="noopener">
+                {project.link.label} <span aria-hidden="true">&#8599;</span>
+              </a>
+            )
           )}
         </div>
       </div>
