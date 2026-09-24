@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
+import TurnstileField from "../../components/TurnstileField";
 
 const PHOTOS = [
   { key: "alaska", src: "/images/summon-photo1.jpg", full: "/images/summon-photo1-full.jpg", label: "Alaska" },
@@ -16,6 +18,10 @@ export default function Summons() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [company, setCompany] = useState("");
+  const [token, setToken] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   useEffect(() => {
     document.body.classList.add("no-scroll-page");
@@ -25,19 +31,25 @@ export default function Summons() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg("");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, message, company, turnstileToken: token }),
       });
-      if (!res.ok) throw new Error("failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Something went wrong, try again in a moment.");
       setStatus("sent");
       setName("");
       setEmail("");
       setMessage("");
-    } catch {
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong, try again in a moment.");
       setStatus("error");
+    } finally {
+      turnstileRef.current?.reset();
+      setToken("");
     }
   }
 
@@ -87,6 +99,16 @@ export default function Summons() {
             required
           />
 
+          {/* honeypot */}
+          <div className="hp-field" aria-hidden="true">
+            <label>
+              Company
+              <input tabIndex={-1} autoComplete="off" value={company} onChange={(e) => setCompany(e.target.value)} />
+            </label>
+          </div>
+
+          <TurnstileField ref={turnstileRef} onToken={setToken} />
+
           <div className="summon-form-footer">
             <button className="summon-send-btn" type="submit" disabled={status === "sending"}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -97,7 +119,7 @@ export default function Summons() {
             </button>
             <div className="summon-form-note">
               {status === "sent" && "Sent. I'll get back to you soon."}
-              {status === "error" && "Something went wrong, try again in a moment."}
+              {status === "error" && errorMsg}
             </div>
           </div>
         </form>

@@ -780,3 +780,8 @@ button.cr-cta{border:none;cursor:pointer;}
   .cr-arch{transition:none;}
   .cr-glow,.cr-ov,.cr-panel,.cr-light,.cr-sway{animation:none;}
 }
+
+   /* contact spam guards */
+   .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+   .turnstile-wrap{margin:.75rem 0 .25rem;min-height:0}
+   .turnstile-wrap:empty{display:none}
