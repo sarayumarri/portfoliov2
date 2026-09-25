@@ -1,8 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { Luxurious_Script } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SpotifyPlayer from "@/components/SpotifyPlayer";
 import "./globals.css";
+
+const aileron = localFont({
+  src: "./fonts/Aileron-Regular.woff",
+  variable: "--font-aileron",
+  display: "swap",
+  preload: true,
+});
+
+const luxuriousScript = Luxurious_Script({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-luxurious-script",
+  display: "swap",
+  preload: true,
+});
 
 /* App shell and metadata */
 export const metadata: Metadata = {
@@ -30,15 +47,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <head>
-        {/* fonts: connect early, then load in parallel with the page instead of after globals.css */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="preconnect" href="https://fonts.cdnfonts.com" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luxurious+Script&display=swap" />
-        <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/aileron" />
-      </head>
-      <body>
+      <body className={`${aileron.variable} ${luxuriousScript.variable}`}>
         <Nav />
         <SpotifyPlayer />
         {children}

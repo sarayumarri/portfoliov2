@@ -23,6 +23,7 @@ export default function MediaView({ src, alt = "", play = true, thumb = false, s
   const [wanted, setWanted] = useState(false); // latches true the first time it should play
   const vid = useRef<HTMLVideoElement>(null);
   const video = isVideo(src);
+  const portfolioVideo = src === "/videos/portfoliov2.mp4";
 
   // watch whether the video is anywhere near the screen
   useEffect(() => {
@@ -58,7 +59,8 @@ export default function MediaView({ src, alt = "", play = true, thumb = false, s
       muted
       loop
       playsInline
-      preload={wanted ? "auto" : "none"}
+      autoPlay={portfolioVideo}
+      preload={portfolioVideo ? "metadata" : wanted ? "auto" : "none"}
       onError={() => setMissing(true)}
       aria-label={alt || undefined}
     />

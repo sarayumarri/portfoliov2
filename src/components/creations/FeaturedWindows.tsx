@@ -60,18 +60,25 @@ export default function FeaturedWindows({ onOpen }: Props) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const wall = wallRef.current!;
-    let raf = 0, queued = false, visible = false;
+    let raf = 0, queued = false, visible = false, ready = false;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
+    let wallCenter = 0, wallHeight = 0;
+    const cacheLayout = () => {
+      const r = wall.getBoundingClientRect();
+      wallCenter = r.top + window.scrollY + r.height / 2;
+      wallHeight = r.height;
+    };
     const update = () => {
       queued = false;
-      const r = wall.getBoundingClientRect();
-      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
-      const off = r.top + r.height / 2 - window.innerHeight / 2; // 0 when the wall is centered on screen
+      const top = wallCenter - window.scrollY - wallHeight / 2;
+      if (top + wallHeight < -200 || top > window.innerHeight + 200) return;
+      const off = top + wallHeight / 2 - window.innerHeight / 2;
       plxRefs.current.forEach((el, i) => {
         if (el) el.style.transform = `translate3d(0,${(off * PLANTS[i].depth).toFixed(1)}px,0)`;
       });
     };
     const onScroll = () => {
-      if (!visible || document.visibilityState !== "visible" || queued) return;
+      if (!ready || !visible || document.visibilityState !== "visible" || queued) return;
       queued = true;
       raf = requestAnimationFrame(update);
     };
@@ -79,19 +86,27 @@ export default function FeaturedWindows({ onOpen }: Props) {
       visible = entry.isIntersecting;
       if (visible) onScroll();
     });
-    const onVisibility = () => { if (document.visibilityState === "visible" && visible) onScroll(); };
+    const onVisibility = () => { if (ready && document.visibilityState === "visible" && visible) onScroll(); };
+    const onResize = () => { cacheLayout(); onScroll(); };
+    cacheLayout();
     io.observe(wall);
     document.addEventListener("visibilitychange", onVisibility);
     const guardedScroll = () => { if (visible && document.visibilityState === "visible") onScroll(); };
     guardedScroll();
     window.addEventListener("scroll", guardedScroll, { passive: true });
-    window.addEventListener("resize", guardedScroll);
+    window.addEventListener("resize", onResize);
+    const start = () => { ready = true; if (visible) onScroll(); };
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("scroll", guardedScroll);
-      window.removeEventListener("resize", guardedScroll);
+      window.removeEventListener("resize", onResize);
+      if (idleId !== undefined) (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, []);
 

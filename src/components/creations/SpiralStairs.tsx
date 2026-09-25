@@ -95,10 +95,13 @@ export default function SpiralStairs({ onOpen }: Props) {
       section.style.height = h + (N - 1) * h * 0.75 + "px";
     };
 
-    const progress = () => {
-      const r = section.getBoundingClientRect(), span = section.offsetHeight - window.innerHeight;
-      return Math.min(1, Math.max(0, -r.top / span));
+    let sectionTop = 0;
+    let sectionSpan = 1;
+    const cacheProgressBounds = () => {
+      sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      sectionSpan = Math.max(1, section.offsetHeight - window.innerHeight);
     };
+    const progress = () => Math.min(1, Math.max(0, (window.scrollY - sectionTop) / sectionSpan));
 
     let current = 0, prevT = -1, last = -1, raf = 0, visible = false;
     const frame = () => {
@@ -123,6 +126,7 @@ export default function SpiralStairs({ onOpen }: Props) {
     };
 
     layout();
+    cacheProgressBounds();
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       cancelAnimationFrame(raf);
@@ -134,12 +138,13 @@ export default function SpiralStairs({ onOpen }: Props) {
     };
     io.observe(section);
     document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("resize", layout);
+    const onResize = () => { layout(); cacheProgressBounds(); };
+    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("resize", layout);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 

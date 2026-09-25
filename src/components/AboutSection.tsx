@@ -164,8 +164,10 @@ export default function AboutSection() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let ticking = false;
     let visible = false;
+    let ready = false;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
     function onScroll() {
-      if (visible && document.visibilityState === "visible" && !ticking) {
+      if (ready && visible && document.visibilityState === "visible" && !ticking) {
         ticking = true;
         requestAnimationFrame(() => {
           ticking = false;
@@ -178,16 +180,22 @@ export default function AboutSection() {
       visible = entry.isIntersecting;
       if (visible) onScroll();
     });
-    const onVisibility = () => { if (document.visibilityState === "visible" && visible) onScroll(); };
+    const onVisibility = () => { if (ready && document.visibilityState === "visible" && visible) onScroll(); };
     if (section) io.observe(section);
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    const start = () => { ready = true; if (visible) onScroll(); };
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     return () => {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      if (idleId !== undefined) (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, [updateColumns]);
 
@@ -205,6 +213,7 @@ export default function AboutSection() {
           src="/images/about-static.webp"
           width={1366}
           height={1053}
+          sizes="100vw"
           alt="About Me: Sarayu Marri, Computer Science and Digital Media student at UCF Burnett Honors College, 2x BNY, Meynde, Knight Hacks org, XR researcher. Class Multiclass, Speciality Interactive Experiences, Guild University of Central Florida, Quest Bring ideas to life."
         />
       </section>

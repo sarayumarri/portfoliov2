@@ -32,7 +32,7 @@ export const CREATIONS: Creation[] = [
     short: "This site: a grimoire themed portfolio with a 3D spiral staircase of projects built in pure CSS.",
     desc: "Portfolio v2 is the second version of my personal site, built around a grimoire and castle theme. The Creations page winds every project around a 3D spiral staircase made entirely with CSS 3D transforms, driven by a scroll-linked animation loop tuned to hold 60fps. Featured projects sit in stone arch windows drawn procedurally in SVG, framed by layered ivy with scroll parallax and canvas-drawn fireflies. Across the site, videos stay as lightweight still images until they scroll into view, animations respect reduced-motion settings, and every page adapts from wide desktop screens down to phones.",
     tags: ["Next.js", "React", "TypeScript", "CSS 3D", "SVG", "Canvas"],
-    media: ["/creations/portfolio-v2/stairs.mp4", "/creations/portfolio-v2/featured-wall.mp4", "/creations/portfolio-v2/popup.jpg", "/creations/portfolio-v2/phone.jpg"],
+    media: ["/videos/portfoliov2.mp4", "/creations/portfolio-v2/featured-wall.mp4", "/creations/portfolio-v2/popup.jpg", "/creations/portfolio-v2/phone.jpg"],
   },
   {
     id: "cosmos",
@@ -147,6 +147,10 @@ export const ALL_BY_ID: Record<string, Creation> = Object.fromEntries(
 
 export const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
 // every video has a small still next to it: demo.mp4 -> demo.poster.webp
-export const posterOf = (src: string) => src.replace(/\.(mp4|webm|mov)$/i, ".poster.webp");
+export const posterOf = (src: string) => src === "/videos/portfoliov2.mp4"
+  ? "/videos/portfoliov2-poster.jpg"
+  : src.replace(/\.(mp4|webm|mov)$/i, ".poster.webp");
 // the first video of each project also has a lighter 640px copy for the windows and stairs: demo.mp4 -> demo.sm.mp4
-export const smallOf = (src: string) => src.replace(/\.(mp4|webm|mov)$/i, ".sm.mp4");
+export const smallOf = (src: string) => src === "/videos/portfoliov2.mp4"
+  ? src
+  : src.replace(/\.(mp4|webm|mov)$/i, ".sm.mp4");

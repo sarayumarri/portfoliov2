@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import AboutSection from "@/components/AboutSection";
 
 /* Home — hero and player */
@@ -36,6 +37,7 @@ export default function Home() {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     let lastTrail = 0;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
 
     function spawnTrailStar(x: number, y: number) {
       const star = document.createElement("div");
@@ -60,9 +62,14 @@ export default function Home() {
         spawnTrailStar(x, y);
       }
     }
-    shell.addEventListener("mousemove", onMove);
+    const start = () => shell.addEventListener("mousemove", onMove);
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     return () => {
       shell.removeEventListener("mousemove", onMove);
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, []);
 
@@ -73,6 +80,7 @@ export default function Home() {
     const NAME_STALL = 170;
     let raf = 0;
     let active = false;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
     const schedule = () => {
       if (active && document.visibilityState === "visible") raf = requestAnimationFrame(tick);
     };
@@ -100,19 +108,34 @@ export default function Home() {
       cancelAnimationFrame(raf);
       schedule();
     };
-    if (heroRef.current) io.observe(heroRef.current);
+    const start = () => { if (heroRef.current) io.observe(heroRef.current); };
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, []);
 
   return (
     <>
       <section className="hero" ref={heroRef}>
-      <div className="hero-bg" ref={heroBgRef} />
+      <div className="hero-bg" ref={heroBgRef}>
+        <Image
+          className="hero-image"
+          src="/images/home-bg.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          fetchPriority="high"
+        />
+      </div>
       <div className="hero-overlay" />
       <div className="corner-deco tr" />
       <div className="corner-deco bl" />

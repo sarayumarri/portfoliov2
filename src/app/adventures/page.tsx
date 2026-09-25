@@ -54,7 +54,7 @@ const EXPERIENCES = [
   },
   {
     org: "Burnett Honors College",
-    role: "Hackathon Organizer",
+    role: "Orientation Ambassador & Symposium Team Leader",
     dates: "May 2025 - December 2025",
     desc: "I served as a Symposium Team Leader and Orientation Ambassador for UCF's Burnett Honors College. I led weekly discussions for 15-20 students and advised 20+ incoming students on academics and course planning. I also supported orientation programming for 200+ students, helping new students transition into the UCF community.",
     frame: "frame-simple.webp",
@@ -128,16 +128,24 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let rafId = 0;
-    let visible = false;
+    let visible = false, ready = false;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
+    const vine = imgRefs.current[0]?.parentElement;
+    let bloomCenters: number[] = [];
+
+    const cachePositions = () => {
+      if (!vine) return;
+      const vineTop = vine.getBoundingClientRect().top + window.scrollY;
+      bloomCenters = imgRefs.current.map((el) => el ? vineTop + el.offsetTop + el.offsetHeight / 2 : 0);
+    };
 
     function apply() {
-      if (!visible || document.visibilityState !== "visible") return;
+      if (!ready || !visible || document.visibilityState !== "visible") return;
       const viewportCenter = window.innerHeight / 2;
       blooms.forEach((b, i) => {
         const el = imgRefs.current[i];
         if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const distanceFromCenter = rect.top + rect.height / 2 - viewportCenter;
+        const distanceFromCenter = bloomCenters[i] - window.scrollY - viewportCenter;
         const offset = Math.max(-220, Math.min(220, -distanceFromCenter * b.speed));
         el.style.transform = `translateY(${offset.toFixed(1)}px)${
           side === "right" ? " scaleX(-1)" : ""
@@ -146,23 +154,38 @@ function FlowerVine({ side, blooms }: { side: "left" | "right"; blooms: Bloom[] 
       rafId = requestAnimationFrame(apply);
     }
 
-    const vine = imgRefs.current[0]?.parentElement;
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       cancelAnimationFrame(rafId);
-      if (visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
+      if (ready && visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
     });
     const onVisibility = () => {
       cancelAnimationFrame(rafId);
+      if (ready && visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
+    };
+    const onResize = () => { cachePositions(); if (ready && visible) apply(); };
+    if (vine) {
+      cachePositions();
+      io.observe(vine);
+      window.addEventListener("resize", onResize);
+    }
+    const start = () => {
+      ready = true;
+      cachePositions();
       if (visible && document.visibilityState === "visible") rafId = requestAnimationFrame(apply);
     };
-    if (vine) io.observe(vine);
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(rafId);
       io.disconnect();
+      window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
+      if (idleId !== undefined) (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

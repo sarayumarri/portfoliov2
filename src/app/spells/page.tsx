@@ -7,13 +7,10 @@ import dynamic from "next/dynamic";
 const FallingSpells = dynamic(() => import("./FallingSpells"), { ssr: false });
 const SpellsScene = dynamic(() => import("./SpellsScene"), { ssr: false });
 
-const ATTRS = [
-  { label: "Resourcefulness", value: 95 },
-  { label: "Visual Instinct", value: 90 },
-  { label: "Adaptability", value: 88 },
-  { label: "Synthesis", value: 87 },
-  { label: "Collaboration", value: 82 },
-  { label: "Rabbit-Hole Diving", value: 95 },
+const ACHIEVEMENTS = [
+  { name: "3x award winner", detail: "Best App (Kinexis), Best Non-AI Hack (CappuConnect), Best Artistic Direction (Evangeline)" },
+  { name: "Went global", detail: "shipped a multilingual React site for a clinic in Barcelona" },
+  { name: "Community builder", detail: "organizer at KnightHacks" },
 ];
 
 const SUITS = [
@@ -223,20 +220,23 @@ export default function Spells() {
             <div className="spells-attrs-panel" onClick={(e) => e.stopPropagation()}>
               <div className="spells-attrs-idx tl">A<span>✦</span></div>
               <div className="spells-attrs-idx br">A<span>✦</span></div>
-              <h3 className="spells-attrs-heading">attributes</h3>
-              {ATTRS.map((a) => (
-                <div key={a.label} className="spells-attr-row">
-                  <span className="spells-attr-label">{a.label}</span>
-                  <div className="spells-attr-bar">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`spells-attr-seg${i < Math.round(a.value / 10) ? " on" : ""}`}
-                      />
-                    ))}
+              <h3 className="spells-attrs-heading">achievements unlocked</h3>
+              <div className="spells-achievements">
+                {ACHIEVEMENTS.map((achievement) => (
+                  <div key={achievement.name} className="spells-achievement-row">
+                    <span className="spells-achievement-star" aria-hidden="true">✦</span>
+                    <span><b>{achievement.name}</b> &mdash; {achievement.detail}</span>
                   </div>
+                ))}
+                <div className="spells-achievement-divider" />
+                <div className="spells-achievement-row is-locked">
+                  <svg className="spells-achievement-lock" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="5" y="10" width="14" height="10" rx="2" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                  </svg>
+                  <span><b className="spells-achievement-locked-name">Launch Evangeline</b> &mdash; in beta, coming soon</span>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

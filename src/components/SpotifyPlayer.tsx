@@ -29,11 +29,13 @@ declare global {
 /* Shared Spotify player */
 export default function SpotifyPlayer() {
   const [open, setOpen] = useState(false);
+  const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const embedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!started) return;
     const embed = embedRef.current;
     if (!embed) return;
 
@@ -73,7 +75,7 @@ export default function SpotifyPlayer() {
     return () => {
       if (window.onSpotifyIframeApiReady === onReady) delete window.onSpotifyIframeApiReady;
     };
-  }, []);
+  }, [started]);
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
@@ -94,15 +96,20 @@ export default function SpotifyPlayer() {
 
   return (
     <div className={`spotify-player${open ? " is-open" : ""}`} ref={panelRef}>
-      <div className="spotify-player-panel" aria-hidden={!open}>
-        <div ref={embedRef} className="spotify-player-embed" />
-      </div>
+      {started && (
+        <div className="spotify-player-panel" aria-hidden={!open}>
+          <div ref={embedRef} className="spotify-player-embed" />
+        </div>
+      )}
       <button
         type="button"
         className={`spotify-player-toggle${playing ? " is-playing" : ""}`}
         aria-label="Open music player"
         aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          setStarted(true);
+          setOpen((value) => !value);
+        }}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 18.5a3.5 3.5 0 1 1-2-3.17V5.5l11-2v11a3.5 3.5 0 1 1-2-3.17V7.1L9 8.37z" />

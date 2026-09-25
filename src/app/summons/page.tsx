@@ -21,9 +21,19 @@ export default function Summons() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [company, setCompany] = useState("");
-  const [token, setToken] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const tokenRef = useRef("");
+  const tokenWaiters = useRef<Array<(token: string) => void>>([]);
+
+  function handleToken(nextToken: string) {
+    tokenRef.current = nextToken;
+    if (nextToken) {
+      tokenWaiters.current.splice(0).forEach((resolve) => resolve(nextToken));
+    } else if (tokenWaiters.current.length) {
+      tokenWaiters.current.splice(0).forEach((resolve) => resolve(""));
+    }
+  }
 
   useEffect(() => {
     document.body.classList.add("no-scroll-page");
@@ -35,10 +45,14 @@ export default function Summons() {
     setStatus("sending");
     setErrorMsg("");
     try {
+      const readyToken = tokenRef.current || await new Promise<string>((resolve) => {
+        tokenWaiters.current.push(resolve);
+      });
+      if (!readyToken) throw new Error("Couldn\'t verify you\'re human. Try again.");
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, company, turnstileToken: token }),
+        body: JSON.stringify({ name, email, message, company, turnstileToken: readyToken }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong, try again in a moment.");
@@ -51,7 +65,7 @@ export default function Summons() {
       setStatus("error");
     } finally {
       turnstileRef.current?.reset();
-      setToken("");
+      handleToken("");
     }
   }
 
@@ -108,7 +122,7 @@ export default function Summons() {
             </label>
           </div>
 
-          <TurnstileField ref={turnstileRef} onToken={setToken} />
+          <TurnstileField ref={turnstileRef} onToken={handleToken} />
 
           <div className="summon-form-footer">
             <button className="summon-send-btn" type="submit" disabled={status === "sending"}>
@@ -116,7 +130,7 @@ export default function Summons() {
                 <path d="M22 2 11 13" />
                 <path d="M22 2 15 22l-4-9-9-4Z" />
               </svg>
-              {status === "sending" ? "SENDING..." : "SEND NOTE"}
+              {status === "sending" ? "Sending…" : "SEND NOTE"}
             </button>
             <div className="summon-form-note">
               {status === "sent" && "Sent. I'll get back to you soon."}
@@ -139,6 +153,7 @@ export default function Summons() {
               alt="Click to see pictures from my travels"
               width={392}
               height={290}
+              sizes="(max-width: 560px) 78vw, 18vw"
             />
             {filmOpen &&
               PHOTOS.map((p, i) => (

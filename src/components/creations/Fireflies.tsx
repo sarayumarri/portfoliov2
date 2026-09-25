@@ -11,7 +11,8 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
   useEffect(() => {
     const cvs = ref.current!, ctx = cvs.getContext("2d")!, host = cvs.parentElement!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let W = 0, H = 0, raf = 0, visible = false, tick = 0;
+    let W = 0, H = 0, raf = 0, visible = false, ready = false, targetDirty = true;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
     let tx = 0, ty = 0;
 
     const size = () => {
@@ -19,6 +20,7 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
       W = host.clientWidth; H = host.clientHeight;
       cvs.width = W * dpr; cvs.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      targetDirty = true;
     };
     size();
     const ro = new ResizeObserver(size); ro.observe(host);
@@ -30,14 +32,15 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
 
     const findTarget = () => {
       const win = host.querySelector('.cr-arch[data-pos="center"] svg');
-      if (!win) { tx = W / 2; ty = H / 2; return; }
+      if (!win) { tx = W / 2; ty = H / 2; targetDirty = false; return; }
       const a = win.getBoundingClientRect(), h = host.getBoundingClientRect();
       tx = a.left - h.left + a.width / 2; ty = a.top - h.top + a.height * 0.45;
+      targetDirty = false;
     };
 
     const draw = (time: number) => {
       if (!visible || document.visibilityState !== "visible") return;
-      if (tick++ % 20 === 0) findTarget();
+      if (targetDirty) findTarget();
       ctx.clearRect(0, 0, W, H);
       for (const f of flies) {
         if (!reduce) {
@@ -64,19 +67,31 @@ export default function Fireflies({ gather = true }: { gather?: boolean }) {
     const io = new IntersectionObserver((es) => {
       visible = es[0].isIntersecting;
       cancelAnimationFrame(raf);
-      if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
+      if (ready && visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
     });
     const onVisibility = () => {
       cancelAnimationFrame(raf);
+      if (ready && visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
+    };
+    const mo = new MutationObserver(() => { targetDirty = true; });
+    mo.observe(host, { subtree: true, attributes: true, attributeFilter: ["data-pos"] });
+    const start = () => {
+      ready = true;
       if (visible && document.visibilityState === "visible") raf = requestAnimationFrame(draw);
     };
+    const idle = (window as Window & { requestIdleCallback?: (callback: () => void) => number }).requestIdleCallback;
+    const idleId = idle ? idle(start) : undefined;
+    if (!idle) idleTimer = setTimeout(start, 1500);
     io.observe(host);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
       io.disconnect();
+      mo.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      if (idleId !== undefined) (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idleId);
+      if (idleTimer) clearTimeout(idleTimer);
     };
   }, [gather]);
 
