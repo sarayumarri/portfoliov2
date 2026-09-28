@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import TurnstileField from "../../components/TurnstileField";
@@ -34,11 +34,6 @@ export default function Summons() {
       tokenWaiters.current.splice(0).forEach((resolve) => resolve(""));
     }
   }
-
-  useEffect(() => {
-    document.body.classList.add("no-scroll-page");
-    return () => document.body.classList.remove("no-scroll-page");
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

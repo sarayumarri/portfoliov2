@@ -549,7 +549,7 @@ body{font-family:var(--font-aileron),'Aileron',sans-serif;background:var(--leath
 .spell-logo-img{width:18px;height:18px;object-fit:contain;display:block;}
 .spell-logo-fallback{display:none;align-items:center;justify-content:center;font-size:6px;text-align:center;color:#333;line-height:1.1;width:100%;}
 
-.summon-hero{position:relative;min-height:100vh;overflow:hidden;background:#1c2412;}
+.summon-hero{position:relative;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;overflow-x:clip;background:#1c2412;}
 .summon-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .summon-overlay{position:absolute;inset:0;background:rgba(20,25,15,.3);}
 .summon-content{position:relative;z-index:2;padding:clamp(24px,5vh,40px) clamp(20px,5vw,70px) clamp(16px,4vh,50px);display:flex;flex-wrap:wrap;gap:clamp(16px,3vh,32px) clamp(24px,4vw,56px);align-items:flex-start;justify-content:flex-start;}
@@ -601,20 +601,10 @@ body{font-family:var(--font-aileron),'Aileron',sans-serif;background:var(--leath
 .summon-lightbox-close{position:fixed;top:20px;right:24px;background:none;border:none;color:var(--gold3);font-size:36px;line-height:1;cursor:pointer;font-family:Arial,sans-serif;padding:4px 10px;z-index:201;}
 .summon-lightbox-close:hover{opacity:.75;}
 
-/* Lock the Summon page (nav + hero + footer) into exactly one viewport, no scrolling */
-body.no-scroll-page{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
-body.no-scroll-page .site-nav-wrap{flex-shrink:0;}
-body.no-scroll-page .site-footer{flex-shrink:0;}
-body.no-scroll-page .summon-hero{flex:1 1 auto;min-height:0;height:auto;display:flex;align-items:flex-start;justify-content:center;}
-body.no-scroll-page .summon-content{max-height:100%;overflow:hidden;}
-body.no-scroll-page .summon-content:has(.summon-privacy[open]){overflow-y:auto;}
-
 @media (max-width:760px){
   .summon-content{flex-direction:column;align-items:center;}
-  body.no-scroll-page .summon-content{max-height:none;overflow:visible;}
   .summon-left-col{width:100%;}
   .summon-camera-wrap{margin:0 auto;width:min(78vw,320px);}
-  body.no-scroll-page{height:auto;min-height:100vh;overflow:auto;}
 }
 
 /* ═══════════════ CREATIONS ═══════════════ */
