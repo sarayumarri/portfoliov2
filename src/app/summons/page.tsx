@@ -110,7 +110,7 @@ export default function Summons() {
             className="summon-field-input summon-field-textarea"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Leave a note, question, collaboration idea, or anything worth following up on."
+            placeholder="Stopping by the gate? Share an opportunity, an idea, or just say hi."
             required
           />
 
@@ -132,6 +132,21 @@ export default function Summons() {
               </svg>
               {status === "sending" ? "Sending…" : "SEND NOTE"}
             </button>
+            <p className="summon-privacy-note">
+              Your message is stored securely and deleted after 12 months. You can ask me to delete it anytime.
+            </p>
+            <details className="summon-privacy">
+              <summary>
+                Privacy details
+                <svg className="summon-privacy-chevron" viewBox="0 0 12 12" aria-hidden="true">
+                  <path d="m4 2 4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </summary>
+              <p className="summon-privacy-details">
+                When you send a message, I collect your name, email, and message so I can reply, plus a hashed version of your IP address to block spam. Messages are stored in Supabase, Resend notifies me when one arrives, and Cloudflare Turnstile checks that you&apos;re human. The site is hosted on Vercel, and the Spotify music player may set its own cookies. I never sell your information or use it for anything besides replying, and messages are deleted after 12 months. To have yours deleted sooner, email{" "}
+                <a href="mailto:sarayu.marri3@gmail.com">sarayu.marri3@gmail.com</a>.
+              </p>
+            </details>
             <div className="summon-form-note">
               {status === "sent" && "Sent. I'll get back to you soon."}
               {status === "error" && errorMsg}

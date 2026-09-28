@@ -569,6 +569,19 @@ body{font-family:var(--font-aileron),'Aileron',sans-serif;background:var(--leath
 .summon-send-btn svg{width:16px;height:16px;}
 .summon-send-btn:disabled{opacity:.6;cursor:not-allowed;}
 .summon-form-note{font-size:12px;font-style:italic;color:rgba(255,255,255,.6);}
+.summon-privacy-note,.summon-privacy-details{font-family:var(--font-aileron),'Aileron',sans-serif;font-size:13px;line-height:1.55;color:rgba(239,231,216,.72);}
+.summon-privacy-note{max-width:48ch;text-align:center;}
+.summon-privacy{width:100%;}
+.summon-privacy summary{min-height:44px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--gold3);font-family:var(--font-aileron),'Aileron',sans-serif;font-size:12px;font-weight:700;cursor:pointer;list-style:none;}
+.summon-privacy summary::-webkit-details-marker{display:none;}
+.summon-privacy summary:focus-visible{outline:2px solid var(--gold3);outline-offset:2px;border-radius:3px;}
+.summon-privacy-chevron{width:10px;height:10px;flex:0 0 auto;transition:transform .16s ease;}
+.summon-privacy[open] .summon-privacy-chevron{transform:rotate(90deg);}
+.summon-privacy-details{max-width:60ch;margin:0 auto;text-align:left;overflow-wrap:anywhere;}
+.summon-privacy-details a{color:var(--gold3);text-decoration:underline;text-underline-offset:2px;}
+@media (prefers-reduced-motion:reduce){
+  .summon-privacy-chevron{transition:none;}
+}
 
 .summon-flower{width:100px;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));cursor:default;flex-shrink:0;transform-origin:50% 50%;animation:tilt-sway 1.4s linear infinite;}
 @media (prefers-reduced-motion:reduce){
@@ -594,9 +607,11 @@ body.no-scroll-page .site-nav-wrap{flex-shrink:0;}
 body.no-scroll-page .site-footer{flex-shrink:0;}
 body.no-scroll-page .summon-hero{flex:1 1 auto;min-height:0;height:auto;display:flex;align-items:flex-start;justify-content:center;}
 body.no-scroll-page .summon-content{max-height:100%;overflow:hidden;}
+body.no-scroll-page .summon-content:has(.summon-privacy[open]){overflow-y:auto;}
 
 @media (max-width:760px){
   .summon-content{flex-direction:column;align-items:center;}
+  body.no-scroll-page .summon-content{max-height:none;overflow:visible;}
   .summon-left-col{width:100%;}
   .summon-camera-wrap{margin:0 auto;width:min(78vw,320px);}
   body.no-scroll-page{height:auto;min-height:100vh;overflow:auto;}
