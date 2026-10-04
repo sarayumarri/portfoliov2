@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 const EXPERIENCES = [
   {
     org: "Meynde Centro M\u00e9dico",
-    role: "Tech and Business Intern",
+    role: "Product Design Intern",
     dates: "May 2026 - June 2026",
     desc: "I worked on redesigning Meynde's online presence while I was in Barcelona. I mapped out their services, audiences, and site structure in Figma, with a focus on making information easier to navigate for an international, multilingual audience. I then turned the designs into a working React and JavaScript prototype. Since I was working with a healthcare organization, the project also required designing around strict data-security limitations.",
     frame: "frame-ornate1.webp",
@@ -18,7 +18,7 @@ const EXPERIENCES = [
   },
   {
     org: "Bank of New York",
-    role: "Software Engineering Intern",
+    role: "App Development & Infrastructure Intern",
     dates: "January 2026 - Present",
     desc: "I built the frontend for Peggy, an internal system that detects and automatically responds to infrastructure issues. Using React and backend APIs, I created a visualization layer for monitoring observability data and tracking system activity in real time. The interface sits on top of a containerized pipeline that can detect and remediate issues in under a minute.",
     frame: "frame-plain-border.webp",
